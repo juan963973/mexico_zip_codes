@@ -1,64 +1,40 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Mexico zip codes
+## _Pasos de como abordé el problema_
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
 
-## About Laravel
+- Primeramente leí el documento y seguí los pasos para descargar la fuente, descargué en el formato CSV.
+- Después usé un administrador de base de datos llamado Sequel para importar los datos del CSV.
+- Importé los datos en MySQL con el mismo formato que vino del archivo.
+- Luego pensé en normalizar mi base de datos ponerle indices y optimizar los campos etc. 
+- Luego se me ocurrió cambiar el motor de InnoDb a MyISAM para ver el resultado. Y era bastante bueno en mi local, las peticiones llegaron menos de 300ms.
+- Ya estuve felíz porque dije ni hace falta más normalizar, simplemente con esto ya lo he resuelto.
+- Luego subí al servidor y ahí tuve una sorpresa!! las peticiones pasaban los 300ms.
+- Luego volví a pensar en cambiar todo InnoDb y normalizar.
+- ahí se me vino la brillante idea de usar MongoDB, pero como tengo un servidor en cPanel y no una VPS, pensé en el dolor de cabeza en la configuración entonces pensé más opciones.
+- Entonces ahí pensé en lo que fué mi solución!!. Exporté mi base de datos en formato json, subí al servidor y usé el archivo como base de datos y implementé con filter de PHP y la velocidad fué buena. con pocas lineas de código pude bajar la velocidad considerablemente.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Instación
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Clone el proyecto en su equipo.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```sh
+git clone https://github.com/juan963973/mexico_zip_codes.git
+```
 
-## Learning Laravel
+No usé el archivo de .env porque no usé base de datos. Para que su laravel no se queje puede copiar el archivo .env.example y configurar el APP_KEY. Luego corra el proyecto.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```sh
+php artisan serve
+```
+Y puede ver el resultado en: http://127.0.0.1:8000/api/zip-codes/01210
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Producción
 
-## Laravel Sponsors
+El proyecto se encuentra alojado en https://delifree.vipar.com.py/api/zip-codes/02120
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+El archivo json puede encontrar en: https://vipar.com.py/mexico_zip_codes.json
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT
+**Free Software!**
