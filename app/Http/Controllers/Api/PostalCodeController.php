@@ -11,41 +11,54 @@ class PostalCodeController extends Controller
 {
     public function zip_code(Request $request) 
     {
-        $data = file_get_contents("https://vipar.com.py/mexico_zip_codes.json");
-        $array = json_decode($data,1);
-        $ID = $request->code;
-        $new_data = array_filter($array[0]['data'], function ($var) use ($ID) {
-            return ($var['d_codigo'] == $ID);
-        });
+        $new_data = $this->query_json($request->code);
         if(count($new_data)) {
+            $settlements = [];
             foreach($new_data as $key => $value) {
-
-                $new_data = [
-                    "zip_code" => $value['d_codigo'],
-                    "locality" => $value['d_ciudad'],
-                    "federal_entity" => [
-                        "key" => $value['c_estado'],
-                        "name"=> $value['d_estado'],
-                        "code"=> $value['c_CP']
-                    ],
-                    "settlements" => [
-                        [
-                            "key" => $value['id_asenta_cpcons'],
-                            "name" => $value['d_asenta'],
-                            "zone_type" => $value['d_zona'],
-                            "settlement_type" => [
-                                "name" => $value['d_tipo_asenta']
-                            ]
-                        ]
-                    ],
-                    "municipality" => [
-                        "key" => $value['c_mnpio'],
-                        "name" => $value['D_mnpio']
+                $settlements[] =  [
+                    "key" => $value['id_asenta_cpcons'],
+                    "name" => $this->spetialChars($value['d_asenta']),
+                    "zone_type" => $this->spetialChars($value['d_zona']),
+                    "settlement_type" => [
+                        "name" => $value['d_tipo_asenta'],
                     ]
                 ];
-                
+                        
+                $new_data = [
+                    "zip_code" => $value['d_codigo'],
+                    "locality" => $this->spetialChars($value['d_ciudad']),
+                    "federal_entity" => [
+                        "key" => $value['c_estado'],
+                        "name"=> $this->spetialChars($value['d_estado']),
+                        "code"=> $value['c_CP']
+                    ],
+                    "settlements" => $settlements,
+                    "municipality" => [
+                        "key" => $value['c_mnpio'],
+                        "name" => $this->spetialChars($value['D_mnpio'])
+                    ]
+                ];
             }
         }
+        return response()->json($new_data);
+    }
+    
+    public function query_json($code) 
+    {
+        setlocale(LC_ALL, "es_ES.utf8");
+        $data = file_get_contents("https://vipar.com.py/mexico_zip_codes.json");
+        $array = json_decode($data,1);
+        $new_data = array_filter($array[0]['data'], function ($var) use ($code) {
+            return ($var['d_codigo'] == $code);
+        });
         return $new_data;
+    }
+    
+    public function spetialChars($string) 
+    {
+        if(!empty($string)) {
+            return strtoupper(iconv('UTF-8','ASCII//TRANSLIT',$string));
+        }
+        return $string;
     }
 }
