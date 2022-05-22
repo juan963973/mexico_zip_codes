@@ -16,7 +16,7 @@ class PostalCodeController extends Controller
             $settlements = [];
             foreach($new_data as $key => $value) {
                 $settlements[] =  [
-                    "key" => $value['id_asenta_cpcons'],
+                    "key" => intval($value['id_asenta_cpcons']),
                     "name" => $this->spetialChars($value['d_asenta']),
                     "zone_type" => $this->spetialChars($value['d_zona']),
                     "settlement_type" => [
@@ -28,9 +28,9 @@ class PostalCodeController extends Controller
                     "zip_code" => $value['d_codigo'],
                     "locality" => $this->spetialChars($value['d_ciudad']),
                     "federal_entity" => [
-                        "key" => $value['c_estado'],
+                        "key" => intval($value['c_estado']), 
                         "name"=> $this->spetialChars($value['d_estado']),
-                        "code"=> $value['c_CP']
+                        "code"=> empty($value['c_CP']) ? null : $value['c_CP']
                     ],
                     "settlements" => $settlements,
                     "municipality" => [
